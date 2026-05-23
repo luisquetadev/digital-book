@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📚 Livro Digital
 
-## Getting Started
+Aplicação web para criar, editar e exportar livros digitais em formato PDF estruturado.
 
-First, run the development server:
+## Tecnologias
+
+- **Next.js 16** — Framework React com App Router
+- **TypeScript** — Tipagem estática
+- **Tailwind CSS 4** — Estilização
+- **Prisma 7** — ORM para base de dados
+- **SQLite** — Base de dados local (via better-sqlite3)
+- **PDFKit** — Geração de PDFs estruturados
+
+## Funcionalidades
+
+- 📖 Criar e gerir múltiplos livros
+- ✏️ Editor de capítulos com interface intuitiva
+- 📄 Exportação para PDF com capa, índice e capítulos formatados
+- 📚 Modo de leitura com navegação entre capítulos
+- 🎨 Personalização da cor da capa
+- 🗑️ Eliminar livros e capítulos
+
+## Começar
+
+### Pré-requisitos
+
+- Node.js 20+
+- npm
+
+### Instalação
 
 ```bash
+# Clonar o repositório
+git clone https://github.com/luisquetadev/digital-book.git
+cd digital-book
+
+# Instalar dependências (gera automaticamente o Prisma Client)
+npm install
+
+# Criar a base de dados
+npx prisma migrate dev
+
+# Iniciar o servidor de desenvolvimento
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A aplicação estará disponível em [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Scripts disponíveis
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Inicia o servidor de desenvolvimento |
+| `npm run build` | Cria a build de produção |
+| `npm run start` | Inicia o servidor de produção |
+| `npm run lint` | Executa o linter |
+| `npm run db:migrate` | Cria/aplica migrações da base de dados |
+| `npm run db:push` | Sincroniza o schema com a base de dados |
+| `npm run db:studio` | Abre o Prisma Studio para gerir dados |
 
-## Learn More
+## Estrutura do Projecto
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/
+│   ├── api/
+│   │   └── books/
+│   │       ├── route.ts          # GET/POST livros
+│   │       └── [id]/
+│   │           ├── route.ts      # GET/PUT/DELETE livro
+│   │           ├── chapters/
+│   │           │   ├── route.ts  # GET/POST capítulos
+│   │           │   └── [chapterId]/
+│   │           │       └── route.ts  # GET/PUT/DELETE capítulo
+│   │           └── pdf/
+│   │               └── route.ts  # GET gerar PDF
+│   ├── books/
+│   │   └── [id]/
+│   │       ├── page.tsx          # Detalhes do livro
+│   │       ├── edit/
+│   │       │   └── page.tsx      # Editor de capítulos
+│   │       └── read/
+│   │           └── page.tsx      # Modo de leitura
+│   ├── layout.tsx
+│   └── page.tsx                  # Página inicial
+├── components/
+│   ├── BookCard.tsx
+│   └── CreateBookModal.tsx
+├── lib/
+│   └── prisma.ts                 # Singleton do Prisma Client
+└── generated/
+    └── prisma/                   # Cliente Prisma gerado
+prisma/
+├── schema.prisma                 # Schema da base de dados
+└── migrations/                   # Migrações
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Livros
 
-## Deploy on Vercel
+- `GET /api/books` — Listar todos os livros
+- `POST /api/books` — Criar um livro
+- `GET /api/books/:id` — Obter um livro
+- `PUT /api/books/:id` — Actualizar um livro
+- `DELETE /api/books/:id` — Eliminar um livro
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Capítulos
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `GET /api/books/:id/chapters` — Listar capítulos
+- `POST /api/books/:id/chapters` — Criar um capítulo
+- `GET /api/books/:id/chapters/:chapterId` — Obter um capítulo
+- `PUT /api/books/:id/chapters/:chapterId` — Actualizar um capítulo
+- `DELETE /api/books/:id/chapters/:chapterId` — Eliminar um capítulo
+
+### PDF
+
+- `GET /api/books/:id/pdf` — Gerar e descarregar o PDF do livro
